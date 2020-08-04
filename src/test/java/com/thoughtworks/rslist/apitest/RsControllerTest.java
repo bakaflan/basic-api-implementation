@@ -31,10 +31,18 @@ public class RsControllerTest {
     }
 
     @Test
-    void should_get_rs_with_index_of_rs() throws Exception {
-        mockMvc.perform(get("/rs")
+    void should_get_rs_by_index_of_rs() throws Exception {
+        mockMvc.perform(get("/rs/index")
                 .param("index","0"))
                 .andExpect(content().string("第一条事件"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_return_rs_list_by_range() throws Exception {
+        mockMvc.perform(get("/rs/range")
+                .param("start","0").param("end","2"))
+                .andExpect(content().string("[第一条事件, 第二条事件]"))
                 .andExpect(status().isOk());
     }
 

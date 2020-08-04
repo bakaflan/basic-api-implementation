@@ -68,5 +68,25 @@ public class RsControllerTest {
 
     }
 
+    @Test
+    void should_update_rs_with_keyword_and_eventName() throws Exception {
+        //language=JSON
+        String requestJson = "{\n" +
+                "  \"index\": 0,\n" +
+                "  \"keyword\":\"事件一改\",\n" +
+                "  \"eventName\":\"第一条事件改\"\n" +
+                "}";
+
+        mockMvc.perform(post("/rs/update")
+                .contentType(MediaType.APPLICATION_JSON).content(requestJson))
+                .andExpect(content().string("成功更新"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(content().string("[0.第一条事件改, 1.第二条事件, 2.第三条事件]"))
+                .andExpect(status().isOk());
+
+    }
+
 
 }

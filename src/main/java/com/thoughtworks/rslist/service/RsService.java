@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.service;
 
 import com.thoughtworks.rslist.pojo.Rs;
+import com.thoughtworks.rslist.util.UpdateRsRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,5 +42,9 @@ public class RsService {
         List<String> subList = new ArrayList<>();
         rsList.subList(start,end).forEach(i -> subList.add(i.getEventName()));
         return subList;
+    }
+
+    public void updateRs(UpdateRsRequest updateRsRequest) {
+        rsList.set(updateRsRequest.getIndex(),updateRsRequest.getRs());
     }
 }

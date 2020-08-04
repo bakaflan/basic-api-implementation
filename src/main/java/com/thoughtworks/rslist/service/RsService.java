@@ -25,11 +25,21 @@ public class RsService {
 
     public List<String> getRsList(){
         List<String> rsEventNameList = new ArrayList<>();
-        rsList.forEach(i -> rsEventNameList.add(i.getEventName()));
+        rsList.forEach(i -> rsEventNameList.add(rsList.indexOf(i)+"."+i.getEventName()));
         return rsEventNameList;
     }
 
     public void addRs(Rs rs) {
         this.rsList.add(rs);
+    }
+
+    public String getRsByIndex(int index) {
+        return rsList.get(index).getEventName();
+    }
+
+    public List<String> getRsByRange(int start, int end) {
+        List<String> subList = new ArrayList<>();
+        rsList.subList(start,end).forEach(i -> subList.add(i.getEventName()));
+        return subList;
     }
 }

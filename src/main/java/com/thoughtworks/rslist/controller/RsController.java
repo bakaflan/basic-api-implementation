@@ -21,13 +21,13 @@ public class RsController {
 
   @GetMapping("/rs/index")
   public String getRsByIndex(@RequestParam int index){
-      return rsService.getRsList().get(index);
+      return rsService.getRsByIndex(index);
 
   }
 
     @GetMapping("/rs/range")
     public String getRsByRange(@RequestParam int start,@RequestParam int end){
-        return rsService.getRsList().subList(start,end).toString();
+        return rsService.getRsByRange(start,end).toString();
     }
 
     @PostMapping("/rs/add")

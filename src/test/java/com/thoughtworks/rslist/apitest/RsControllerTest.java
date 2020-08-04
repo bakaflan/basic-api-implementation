@@ -28,7 +28,7 @@ public class RsControllerTest {
     @Test
     void shouldd_return_re_List() throws Exception {
         mockMvc.perform(get("/rs/list"))
-                .andExpect(content().string("[第一条事件, 第二条事件, 第三条事件]"))
+                .andExpect(content().string("[0.第一条事件, 1.第二条事件, 2.第三条事件]"))
                 .andExpect(status().isOk());
     }
 
@@ -63,7 +63,7 @@ public class RsControllerTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/rs/list"))
-                .andExpect(content().string("[第一条事件, 第二条事件, 第三条事件, 这是一个事件]"))
+                .andExpect(content().string("[0.第一条事件, 1.第二条事件, 2.第三条事件, 3.这是一个事件]"))
                 .andExpect(status().isOk());
 
     }

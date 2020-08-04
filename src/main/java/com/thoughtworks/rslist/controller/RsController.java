@@ -35,9 +35,15 @@ public class RsController {
     }
 
     @PostMapping("/rs/update")
-    public String adddRsWithKeywordAndEventName(@RequestBody UpdateRsRequest UpdateRsRequest){
+    public String updateRsWithKeywordAndEventName(@RequestBody UpdateRsRequest UpdateRsRequest){
         rsService.updateRs(UpdateRsRequest);
         return "成功更新";
+    }
+
+    @PostMapping("/rs/delete")
+    public String deleteRsWithIndex(@RequestParam int index){
+        rsService.deleteRs(index);
+        return "成功删除";
     }
 
 

@@ -69,7 +69,7 @@ public class RsControllerTest {
     }
 
     @Test
-    void should_update_rs_with_keyword_and_eventName() throws Exception {
+    void should_update_rs_with_index_and_keyword_and_eventName() throws Exception {
         //language=JSON
         String requestJson = "{\n" +
                 "  \"index\": 0,\n" +
@@ -84,6 +84,19 @@ public class RsControllerTest {
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(content().string("[0.第一条事件改, 1.第二条事件, 2.第三条事件]"))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void should_delete_rs_with_index() throws Exception {
+        mockMvc.perform(post("/rs/delete")
+                .param("index","0"))
+                .andExpect(content().string("成功删除"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(content().string("[0.第二条事件, 1.第三条事件]"))
                 .andExpect(status().isOk());
 
     }

@@ -47,4 +47,8 @@ public class RsService {
     public void updateRs(UpdateRsRequest updateRsRequest) {
         rsList.set(updateRsRequest.getIndex(),updateRsRequest.getRs());
     }
+
+    public void deleteRs(int index) {
+        rsList.remove(index);
+    }
 }

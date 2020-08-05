@@ -6,6 +6,8 @@ import com.thoughtworks.rslist.service.RsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class RsController {
 
@@ -13,11 +15,11 @@ public class RsController {
     RsService rsService;
 
   @GetMapping("/rs/list")
-  public String getRsList(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end){
+  public List<Rs> getRsList(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end){
       if(start!=null&&end!=null){
-          return rsService.getRsByRange(start,end).toString();
+          return rsService.getRsByRange(start,end);
       }
-      return rsService.getRsList().toString();
+      return rsService.getRsList();
   }
 
   @GetMapping("/rs")
@@ -25,11 +27,6 @@ public class RsController {
       return rsService.getRsByIndex(index);
 
   }
-
-    @GetMapping("/rs/range")
-    public String getRsByRange(@RequestParam int start,@RequestParam int end){
-        return rsService.getRsByRange(start,end).toString();
-    }
 
     @PostMapping("/rs")
     public String adddRsWithKeywordAndEventName(@RequestBody Rs rs){

@@ -26,10 +26,8 @@ public class RsService {
         rsList = initRsList;
     }
 
-    public List<String> getRsList(){
-        List<String> rsEventNameList = new ArrayList<>();
-        rsList.forEach(i -> rsEventNameList.add(rsList.indexOf(i)+"."+i.getEventName()));
-        return rsEventNameList;
+    public List<Rs> getRsList(){
+        return rsList;
     }
 
     public void addRs(Rs rs) {
@@ -40,14 +38,19 @@ public class RsService {
         return rsList.get(index).getEventName();
     }
 
-    public List<String> getRsByRange(int start, int end) {
-        List<String> subList = new ArrayList<>();
-        rsList.subList(start,end).forEach(i -> subList.add(i.getEventName()));
-        return subList;
+    public List<Rs> getRsByRange(int start, int end) {
+        return rsList.subList(start, end);
     }
 
     public void updateRs(UpdateRsRequest updateRsRequest) {
-        rsList.set(updateRsRequest.getIndex(),updateRsRequest.getRs());
+        Rs temp = rsList.get(updateRsRequest.getIndex());
+        if(updateRsRequest.getEventName()!=null){
+            temp.setEventName(updateRsRequest.getEventName());
+        }
+        if(updateRsRequest.getKeyword()!=null){
+            temp.setKeyword(updateRsRequest.getKeyword());
+        }
+        rsList.set(updateRsRequest.getIndex(),temp);
     }
 
     public void deleteRs(int index) {

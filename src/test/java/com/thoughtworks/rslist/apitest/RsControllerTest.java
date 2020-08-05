@@ -1,7 +1,11 @@
 package com.thoughtworks.rslist.apitest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.controller.RsController;
+import com.thoughtworks.rslist.pojo.Rs;
+import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.service.RsService;
+import com.thoughtworks.rslist.util.AddRsRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,9 @@ public class RsControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private RsService rsService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 //    @BeforeAll
 //    void setUp(){
@@ -133,6 +140,26 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$",hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
                 .andExpect(jsonPath("$[1].eventName",is("第三条事件")))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @Order(5)
+    void should_add_rs_with_user() throws Exception {
+        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
+        String eventName = "添加一条热搜";
+        String keyword = "娱乐";
+        AddRsRequest addRsRequest = new AddRsRequest(eventName,keyword,user);
+        String jsonString = objectMapper.writeValueAsString(addRsRequest);
+        mockMvc.perform(post("/rs")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(content().string("成功添加"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$",hasSize(4)))
+                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
                 .andExpect(status().isOk());
 
     }

@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.controller;
 
 import com.thoughtworks.rslist.pojo.Rs;
+import com.thoughtworks.rslist.util.AddRsRequest;
 import com.thoughtworks.rslist.util.UpdateRsRequest;
 import com.thoughtworks.rslist.service.RsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class RsController {
   }
 
     @PostMapping("/rs")
-    public String adddRsWithKeywordAndEventName(@RequestBody Rs rs){
-      rsService.addRs(rs);
+    public String adddRs(@RequestBody AddRsRequest addRsRequest){
+      rsService.addRs(addRsRequest);
       return "成功添加";
     }
 

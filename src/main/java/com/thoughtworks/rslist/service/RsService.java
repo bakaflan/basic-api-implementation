@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.service;
 
 import com.thoughtworks.rslist.pojo.Rs;
+import com.thoughtworks.rslist.util.AddRsRequest;
 import com.thoughtworks.rslist.util.UpdateRsRequest;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,12 @@ public class RsService {
         return rsList;
     }
 
-    public void addRs(Rs rs) {
-        this.rsList.add(rs);
+    public void addRs(AddRsRequest addRsRequest) {
+        this.rsList.add(Rs.builder()
+                .keyword(addRsRequest.getKeyword())
+                .eventName(addRsRequest.getEventName())
+                .user(addRsRequest.getUser())
+                .build());
     }
 
     public String getRsByIndex(int index) {

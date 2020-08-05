@@ -7,12 +7,16 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.*;
 
 @Component
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Validated
+@Builder
 public class User {
     @NotNull
     @Size(max = 8)

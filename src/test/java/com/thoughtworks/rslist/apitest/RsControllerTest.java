@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.controller.RsController;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.service.RsService;
+import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
@@ -32,6 +33,8 @@ public class RsControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private RsService rsService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -43,6 +46,7 @@ public class RsControllerTest {
     @AfterEach
     void backup(){
         rsService.initRsList();
+        userService.initUserList();
     }
 
     @Test
@@ -145,7 +149,7 @@ public class RsControllerTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void should_add_rs_with_user() throws Exception {
         User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
         String eventName = "添加一条热搜";
@@ -161,6 +165,73 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$",hasSize(4)))
                 .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
                 .andExpect(status().isOk());
+
+        mockMvc.perform(get("/user").param("userName","xiaowang"))
+                .andExpect(jsonPath("userName",is("xiaowang")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(7)
+    void should_add_rs_with_exist_user() throws Exception {
+        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
+        String eventName = "添加一条热搜";
+        String keyword = "娱乐";
+        AddRsRequest addRsRequest = new AddRsRequest(eventName,keyword,user);
+        String jsonString = objectMapper.writeValueAsString(addRsRequest);
+        mockMvc.perform(post("/rs")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(content().string("成功添加"))
+                .andExpect(status().isOk());
+
+        addRsRequest.setEventName("添加第二条热搜");
+        mockMvc.perform(post("/rs")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(content().string("成功添加"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$",hasSize(5)))
+                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/user/list"))
+                .andExpect(jsonPath("$",hasSize(1)))
+                .andExpect(jsonPath("$[0].userName",is("xiaowang")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(7)
+    void should_not_add_rs_after_validate() throws Exception {
+        User user = new User("xiaowang", "female", 20, "123@thoughtworks.com", "18988888888");
+        String eventName = "添加一条热搜";
+        String keyword = "娱乐";
+        AddRsRequest addRsRequest = new AddRsRequest(eventName, keyword, user);
+        String jsonString = objectMapper.writeValueAsString(addRsRequest);
+
+        addRsRequest.setEventName(null);
+        jsonString = objectMapper.writeValueAsString(addRsRequest);
+        mockMvc.perform(post("/rs")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(status().isBadRequest());
+
+        addRsRequest.setKeyword(null);
+        addRsRequest.setEventName(eventName);
+        jsonString = objectMapper.writeValueAsString(addRsRequest);
+        mockMvc.perform(post("/rs")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(status().isBadRequest());
+
+        addRsRequest.setKeyword(keyword);
+        addRsRequest.setEventName(eventName);
+        user.setUserName(null);
+        addRsRequest.setUser(user);
+        jsonString = objectMapper.writeValueAsString(addRsRequest);
+        mockMvc.perform(post("/rs")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(status().isBadRequest());
+
 
     }
 

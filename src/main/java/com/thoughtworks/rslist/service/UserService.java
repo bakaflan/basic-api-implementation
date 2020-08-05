@@ -26,6 +26,16 @@ public class UserService {
         }
     }
 
+    public int addUserReturnIndex(User user){
+        if(!isUserExist(user)){
+            this.userList.add(user);
+        }
+        return userList.indexOf(userList.stream()
+                .filter(i->i.getUserName().equals(user.getUserName()))
+                .findFirst()
+                .get());
+    }
+
     public boolean isUserExist(User user){
         Optional<User> optionalUser = userList.stream()
                 .filter(i -> i.getUserName().equals(user.getUserName())).findFirst();

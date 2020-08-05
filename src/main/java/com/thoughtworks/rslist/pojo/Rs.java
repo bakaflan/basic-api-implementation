@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.pojo;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class Rs {
     private String keyword;
     @NotNull
     private String eventName;
+    @JsonIgnore
     private User user;
 
     public Rs(String keyword, String eventName) {

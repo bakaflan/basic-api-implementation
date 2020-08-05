@@ -43,8 +43,8 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("成功新增用户"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","0"))
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -53,12 +53,12 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("成功新增用户"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","0"))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user").param("userName","xiaowang"))
-                .andExpect(jsonPath("userName",is("xiaowang")))
-                .andExpect(jsonPath("denger",is("female")))
+                .andExpect(jsonPath("user_name",is("xiaowang")))
+                .andExpect(jsonPath("user_gender",is("female")))
                 .andExpect(status().isOk());
     }
 
@@ -68,12 +68,12 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("成功新增用户"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","0"))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user/list"))
                 .andExpect(jsonPath("$",hasSize(1)))
-                .andExpect(jsonPath("$[0].userName",is("xiaowang")))
+                .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
                 .andExpect(status().isOk());
     }
 

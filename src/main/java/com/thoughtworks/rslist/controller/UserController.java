@@ -4,6 +4,8 @@ package com.thoughtworks.rslist.controller;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,21 +21,21 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/user")
-    public String registerUser(@RequestBody @Valid User user){
-        userService.addUser(user);
-        return "成功新增用户";
+    public ResponseEntity registerUser(@RequestBody @Valid User user){
+        int index = userService.addUserReturnIndex(user);
+        return ResponseEntity.status(HttpStatus.CREATED).header("index",String.valueOf(index)).body("");
     }
 
     @ResponseBody
     @GetMapping("/user")
-    public User getUserByUserName(@RequestParam String userName){
-        return userService.getUser(userName);
+    public ResponseEntity getUserByUserName(@RequestParam String userName){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(userName));
     }
 
     @ResponseBody
     @GetMapping("/user/list")
-    public List<User> getUserList(){
-        return userService.getUserList();
+    public ResponseEntity getUserList(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserList());
     }
 
 }

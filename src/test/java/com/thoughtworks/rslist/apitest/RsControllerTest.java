@@ -89,8 +89,8 @@ public class RsControllerTest {
 
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(content().string("成功添加"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","3"))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(4)))
@@ -117,12 +117,12 @@ public class RsControllerTest {
         mockMvc.perform(patch("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(content().string("成功更新"))
-                .andExpect(status().isOk());
+                .andExpect(status().isAccepted());
 
         mockMvc.perform(patch("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson1))
                 .andExpect(content().string("成功更新"))
-                .andExpect(status().isOk());
+                .andExpect(status().isAccepted());
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(3)))
@@ -138,7 +138,7 @@ public class RsControllerTest {
         mockMvc.perform(delete("/rs")
                 .param("index","1"))
                 .andExpect(content().string("成功删除"))
-                .andExpect(status().isOk());
+                .andExpect(status().isAccepted());
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(2)))
@@ -158,16 +158,16 @@ public class RsControllerTest {
         String jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("成功添加"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","3"))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(4)))
-                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
+//                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/user").param("userName","xiaowang"))
-                .andExpect(jsonPath("userName",is("xiaowang")))
+                .andExpect(jsonPath("user_name",is("xiaowang")))
                 .andExpect(status().isOk());
     }
 
@@ -181,23 +181,24 @@ public class RsControllerTest {
         String jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("成功添加"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","3"))
+                .andExpect(status().isCreated());
 
         addRsRequest.setEventName("添加第二条热搜");
+        jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("成功添加"))
-                .andExpect(status().isOk());
+                .andExpect(header().string("index","4"))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(5)))
-                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
+//                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/user/list"))
                 .andExpect(jsonPath("$",hasSize(1)))
-                .andExpect(jsonPath("$[0].userName",is("xiaowang")))
+                .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
                 .andExpect(status().isOk());
     }
 

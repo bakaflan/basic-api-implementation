@@ -39,6 +39,14 @@ public class RsService {
                 .build());
     }
 
+    public int addRsReturnIndex(AddRsRequest addRsRequest) {
+        addRs(addRsRequest);
+        return rsList.indexOf(rsList.stream()
+                .filter(i->i.getEventName().equals(addRsRequest.getEventName()))
+                .findFirst()
+                .get());
+    }
+
     public String getRsByIndex(int index) {
         return rsList.get(index).getEventName();
     }

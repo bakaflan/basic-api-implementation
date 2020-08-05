@@ -17,13 +17,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Validated
 public class AddRsRequest {
-    @JsonProperty
     @NotNull
     private String eventName;
-    @JsonProperty
     @NotNull
     private String keyword;
-    @JsonProperty
     @Valid
     private User user;
 }

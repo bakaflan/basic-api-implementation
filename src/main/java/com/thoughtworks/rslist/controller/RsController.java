@@ -13,12 +13,15 @@ public class RsController {
     RsService rsService;
 
   @GetMapping("/rs/list")
-  public String getRsList(){
+  public String getRsList(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end){
+      if(start!=null&&end!=null){
+          return rsService.getRsByRange(start,end).toString();
+      }
       return rsService.getRsList().toString();
   }
 
-  @GetMapping("/rs/index")
-  public String getRsByIndex(@RequestParam int index){
+  @GetMapping("/rs")
+  public String getRsByIndex(@RequestParam Integer index){
       return rsService.getRsByIndex(index);
 
   }
@@ -28,19 +31,19 @@ public class RsController {
         return rsService.getRsByRange(start,end).toString();
     }
 
-    @PostMapping("/rs/add")
+    @PostMapping("/rs")
     public String adddRsWithKeywordAndEventName(@RequestBody Rs rs){
       rsService.addRs(rs);
       return "成功添加";
     }
 
-    @PostMapping("/rs/update")
+    @PatchMapping("/rs")
     public String updateRsWithKeywordAndEventName(@RequestBody UpdateRsRequest UpdateRsRequest){
         rsService.updateRs(UpdateRsRequest);
         return "成功更新";
     }
 
-    @PostMapping("/rs/delete")
+    @DeleteMapping("/rs")
     public String deleteRsWithIndex(@RequestParam int index){
         rsService.deleteRs(index);
         return "成功删除";

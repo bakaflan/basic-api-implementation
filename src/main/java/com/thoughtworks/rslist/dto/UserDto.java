@@ -1,9 +1,11 @@
 package com.thoughtworks.rslist.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.rslist.pojo.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
@@ -15,6 +17,8 @@ import javax.validation.constraints.*;
 @Table(name = "user")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
 
     @Id
@@ -22,15 +26,30 @@ public class UserDto {
     private int Id;
     @Column(name = "name")
     private String userName;
-
     private String gender;
-
     private int age;
-
     private String email;
-
     private String phone;
-
     private int voteNum;
+
+    public static UserDto bind(User user){
+        return UserDto.builder()
+                .userName(user.getUserName())
+                .gender(user.getGender())
+                .age(user.getAge())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .voteNum(user.getVoteNum()).build();
+    }
+
+    public static User parse(UserDto userDto){
+        return User.builder()
+                .userName(userDto.getUserName())
+                .gender(userDto.getGender())
+                .age(userDto.getAge())
+                .email(userDto.getEmail())
+                .phone(userDto.getPhone())
+                .voteNum(userDto.getVoteNum()).build();
+    }
 
 }

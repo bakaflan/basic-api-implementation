@@ -21,18 +21,32 @@ public class UserController {
 
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Valid User user){
-        int index = userService.addUserReturnIndex(user);
-        return ResponseEntity.status(HttpStatus.CREATED).header("index",String.valueOf(index)).body("");
+        userService.creatUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body("保存成功");
     }
 
     @GetMapping("/user")
-    public ResponseEntity getUserByUserName(@RequestParam String userName){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(userName));
+    public ResponseEntity findUser(@RequestParam(required = false) Integer id,@RequestParam(required = false) String userName){
+        if(id!=null&&userName==null){
+            return ResponseEntity.status(HttpStatus.OK).body(userService.findUserById(id));
+        }
+        if(id==null&&userName!=null){
+            return ResponseEntity.status(HttpStatus.OK).body(userService.findUserByUserName(userName));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("error","bad request with double param").body("");
     }
 
     @GetMapping("/user/list")
     public ResponseEntity getUserList(){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserList());
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findUserAll());
     }
+
+    @DeleteMapping("/user")
+    public ResponseEntity deleteUserById(@RequestParam Integer id){
+        userService.deleteUserById(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("删除成功");
+    }
+
+
 
 }

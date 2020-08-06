@@ -37,7 +37,7 @@ public class User {
     @JsonProperty("user_phone")
     private String phone;
     @Value(value = "10")
-    private int voteNum;
+    private int voteNum = 10;
 
     public User(String userName, @NotNull String gender, @NotNull @Size(min = 18, max = 100) int age, @Email String email, @Pattern(regexp = "1\\d{10}") String phone) {
         this.userName = userName;

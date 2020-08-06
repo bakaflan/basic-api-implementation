@@ -1,6 +1,5 @@
-package com.thoughtworks.rslist.Error.excepitonHandler;
+package com.thoughtworks.rslist.Exception.excepitonHandler;
 
-import com.thoughtworks.rslist.Error.Error;
 import com.thoughtworks.rslist.controller.UserController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist.Error;
+package com.thoughtworks.rslist.Exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

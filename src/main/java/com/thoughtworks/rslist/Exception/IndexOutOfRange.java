@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist.Error;
+package com.thoughtworks.rslist.Exception;
 
 public class IndexOutOfRange extends RuntimeException {
     private String message;

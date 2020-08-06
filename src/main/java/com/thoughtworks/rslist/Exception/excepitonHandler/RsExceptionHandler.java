@@ -1,8 +1,8 @@
-package com.thoughtworks.rslist.Error.excepitonHandler;
+package com.thoughtworks.rslist.Exception.excepitonHandler;
 
-import com.thoughtworks.rslist.Error.Error;
-import com.thoughtworks.rslist.Error.IndexOutOfRange;
-import com.thoughtworks.rslist.Error.RsNotValidException;
+
+import com.thoughtworks.rslist.Exception.IndexOutOfRange;
+import com.thoughtworks.rslist.Exception.RsNotValidException;
 import com.thoughtworks.rslist.controller.RsController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

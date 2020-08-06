@@ -1,7 +1,6 @@
 package com.thoughtworks.rslist.controller;
 
-import com.thoughtworks.rslist.Error.IndexOutOfRange;
-import com.thoughtworks.rslist.pojo.Rs;
+import com.thoughtworks.rslist.Exception.IndexOutOfRange;
 import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
 import com.thoughtworks.rslist.util.UpdateRsRequest;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 public class RsController {

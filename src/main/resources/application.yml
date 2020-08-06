@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/rsSystem?serverTimezone=UTC
+    username: nep
+    password: blueflame0203
+  jpa:
+    hibernate:
+      ddl-auto: create

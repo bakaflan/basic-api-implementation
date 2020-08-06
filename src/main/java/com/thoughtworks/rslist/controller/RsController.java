@@ -25,7 +25,7 @@ public class RsController {
     @GetMapping("/rs/list")
     public ResponseEntity getRsList(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end){
         if(start!=null&&end!=null){
-            if(start<0 || end>rsService.getRsListSize()){
+            if(start<0 || end>rsService.getRsListSize()|| start>end){
                 throw new IndexOutOfRange("invalid request param");
             }
             return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsByRange(start,end));

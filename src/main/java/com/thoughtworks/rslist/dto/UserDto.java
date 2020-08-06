@@ -12,6 +12,8 @@ import javax.persistence.*;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -31,6 +33,9 @@ public class UserDto {
     private String email;
     private String phone;
     private int voteNum;
+
+    @OneToMany
+    private List<RsDto> rsDtoList = new ArrayList<>();
 
     public static UserDto bind(User user){
         return UserDto.builder()

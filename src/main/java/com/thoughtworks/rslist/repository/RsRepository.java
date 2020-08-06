@@ -25,4 +25,5 @@ public interface RsRepository extends CrudRepository<RsDto,Integer> {
 
     @Override
     void deleteAll();
+
 }

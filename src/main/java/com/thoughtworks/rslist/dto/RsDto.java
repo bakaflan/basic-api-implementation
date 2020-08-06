@@ -7,9 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -22,6 +20,11 @@ public class RsDto {
     private int id;
     private String eventName;
     private String keyword;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id",insertable = false,updatable = false)
+    private UserDto userDto;
+    @Column(name = "user_id")
     private Integer userId;
 
 
@@ -37,5 +40,14 @@ public class RsDto {
                 .keyword(rsDto.getKeyword())
                 .eventName(rsDto.getEventName())
                 .userId(rsDto.getUserId()).build();
+    }
+
+    public void update(String eventName,String keyword){
+        if(eventName!=null){
+            this.eventName = eventName;
+        }
+        if(keyword!=null){
+            this.keyword = keyword;
+        }
     }
 }

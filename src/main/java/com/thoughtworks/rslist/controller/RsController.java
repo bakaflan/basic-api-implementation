@@ -39,9 +39,9 @@ public class RsController {
        return ResponseEntity.status(HttpStatus.CREATED).body("创建成功");
     }
 
-    @PatchMapping("/rs")
-    public ResponseEntity updateRsWithKeywordAndEventName(@RequestBody UpdateRsRequest updateRsRequest){
-        rsService.updateRs(updateRsRequest);
+    @PatchMapping("/rs/{rsId}")
+    public ResponseEntity updateRs(@PathVariable Integer rsId,@RequestBody UpdateRsRequest updateRsRequest){
+        rsService.updateRs(rsId,updateRsRequest);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功更新");
 
     }

@@ -80,6 +80,7 @@ public class UserService {
         return userDtoOptional.map(UserDto::parse).orElse(null);
     }
 
+    @Transactional
     public void deleteUserById(Integer id){
         userRepository.deleteById(id);
     }

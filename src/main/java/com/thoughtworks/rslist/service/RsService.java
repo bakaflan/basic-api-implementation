@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.service;
 
+import com.thoughtworks.rslist.Exception.RsException;
 import com.thoughtworks.rslist.Exception.UserNotExistedException;
 import com.thoughtworks.rslist.dto.RsDto;
 import com.thoughtworks.rslist.dto.UserDto;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,16 +46,6 @@ public class RsService {
         return rsList;
     }
 
-    public void createRs(AddRsRequest addRsRequest){
-        if(!userRepository.existsById(addRsRequest.getUserId())){
-            throw new UserNotExistedException("user not exist");
-        }
-        rsRepository.save(RsDto.builder()
-                .eventName(addRsRequest.getEventName())
-                .keyword(addRsRequest.getKeyword())
-                .userId(addRsRequest.getUserId()).build());
-    }
-
     public String getRsByIndex(int index) {
         return rsList.get(index).getEventName();
     }
@@ -62,15 +54,17 @@ public class RsService {
         return rsList.subList(start, end);
     }
 
-    public void updateRs(UpdateRsRequest updateRsRequest) {
-        Rs temp = rsList.get(updateRsRequest.getIndex());
-        if(updateRsRequest.getEventName()!=null){
-            temp.setEventName(updateRsRequest.getEventName());
+    public void updateRs(Integer rsId,UpdateRsRequest updateRsRequest) {
+        Optional<RsDto> optionalRsDto = rsRepository.findById(rsId);
+        if(!optionalRsDto.isPresent()){
+            throw new RsException("rs is not exist");
         }
-        if(updateRsRequest.getKeyword()!=null){
-            temp.setKeyword(updateRsRequest.getKeyword());
+        RsDto rsDto = optionalRsDto.get();
+        if(!rsDto.getUserId().equals(updateRsRequest.getUserId())){
+            throw new RsException("rs is not belong to this user");
         }
-        rsList.set(updateRsRequest.getIndex(),temp);
+        rsDto.update(updateRsRequest.getEventName(),updateRsRequest.getKeyword());
+        rsRepository.save(rsDto);
     }
 
     public void deleteRs(int index) {
@@ -79,6 +73,16 @@ public class RsService {
 
     public int getRsListSize() {
         return rsList.size();
+    }
+
+    public void createRs(AddRsRequest addRsRequest){
+        if(!userRepository.existsById(addRsRequest.getUserId())){
+            throw new UserNotExistedException("user not exist");
+        }
+        rsRepository.save(RsDto.builder()
+                .eventName(addRsRequest.getEventName())
+                .keyword(addRsRequest.getKeyword())
+                .userId(addRsRequest.getUserId()).build());
     }
 
     public List<Rs> findAll() {

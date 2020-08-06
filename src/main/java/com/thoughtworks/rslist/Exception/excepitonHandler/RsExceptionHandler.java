@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.Exception.excepitonHandler;
 
 
 import com.thoughtworks.rslist.Exception.IndexOutOfRange;
+import com.thoughtworks.rslist.Exception.RsException;
 import com.thoughtworks.rslist.Exception.RsNotValidException;
 import com.thoughtworks.rslist.Exception.UserNotExistedException;
 import com.thoughtworks.rslist.controller.RsController;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice(assignableTypes = {RsController.class})
 public class RsExceptionHandler {
 
-    @ExceptionHandler({RsNotValidException.class, IndexOutOfRange.class})
+    @ExceptionHandler({RsNotValidException.class, IndexOutOfRange.class, RsException.class})
     public ResponseEntity<Error> rsExceptionHandler(Exception e){
         Error error = new Error(e.getMessage());
         return ResponseEntity.badRequest().body(error);
@@ -28,5 +29,7 @@ public class RsExceptionHandler {
     public ResponseEntity<Error> UserNotExistedExceptionHanlder(Exception e){
         return ResponseEntity.badRequest().body(new Error("create rs with non existed user"));
     }
+
+
 
 }

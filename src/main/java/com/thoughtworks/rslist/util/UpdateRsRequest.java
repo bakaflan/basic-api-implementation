@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class UpdateRsRequest {
-    private int index;
     private String keyword;
     private String eventName;
+    private Integer userId;
 
     public Rs getRs(){
         return new Rs(keyword,eventName);

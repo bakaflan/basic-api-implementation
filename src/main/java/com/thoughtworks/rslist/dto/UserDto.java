@@ -57,4 +57,8 @@ public class UserDto {
                 .voteNum(userDto.getVoteNum()).build();
     }
 
+    public void vote(Integer voteNum){
+        this.voteNum -= voteNum;
+    }
+
 }

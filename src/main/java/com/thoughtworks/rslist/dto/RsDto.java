@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "rs")
 @Data
 @Builder
 @AllArgsConstructor

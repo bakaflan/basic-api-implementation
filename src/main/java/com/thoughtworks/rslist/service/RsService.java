@@ -4,16 +4,20 @@ import com.thoughtworks.rslist.Exception.RsException;
 import com.thoughtworks.rslist.Exception.UserNotExistedException;
 import com.thoughtworks.rslist.dto.RsDto;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.repository.RsRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import com.thoughtworks.rslist.util.AddRsRequest;
+import com.thoughtworks.rslist.util.RsVoteRequest;
 import com.thoughtworks.rslist.util.UpdateRsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +32,9 @@ public class RsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VoteRepository voteRepository;
 
     public RsService() {
         this.rsList = new ArrayList<>();
@@ -54,6 +61,7 @@ public class RsService {
         return rsList.subList(start, end);
     }
 
+    @Transactional
     public void updateRs(Integer rsId,UpdateRsRequest updateRsRequest) {
         Optional<RsDto> optionalRsDto = rsRepository.findById(rsId);
         if(!optionalRsDto.isPresent()){
@@ -75,6 +83,7 @@ public class RsService {
         return rsList.size();
     }
 
+    @Transactional
     public void createRs(AddRsRequest addRsRequest){
         if(!userRepository.existsById(addRsRequest.getUserId())){
             throw new UserNotExistedException("user not exist");
@@ -87,5 +96,30 @@ public class RsService {
 
     public List<Rs> findAll() {
         return rsRepository.findAll().stream().map(RsDto::parse).collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public void voteRs(Integer rsId, RsVoteRequest rsVoteRequest) {
+        if(!rsRepository.existsById(rsId)){
+            throw new RsException("rs is not exist");
+        }
+        Optional<UserDto> optionalUserDto= userRepository.findById(rsVoteRequest.getUserId());
+        if(!optionalUserDto.isPresent()){
+            throw new UserNotExistedException("user not exist");
+        }
+        UserDto userDto = optionalUserDto.get();
+        if(userDto.getVoteNum()<rsVoteRequest.getVoteNum()){
+            throw new RsException("has not enough vote num");
+        }
+        userDto.vote(rsVoteRequest.getVoteNum());
+        voteRepository.save(VoteDto.builder()
+                .rsId(rsId)
+                .userId(rsVoteRequest.getUserId())
+                .time(LocalDateTime.now())
+                .voteNum(rsVoteRequest.getVoteNum()).build());
+
+        userRepository.save(userDto);
+
     }
 }

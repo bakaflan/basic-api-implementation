@@ -1,8 +1,10 @@
 package com.thoughtworks.rslist.controller;
 
 import com.thoughtworks.rslist.Exception.IndexOutOfRange;
+import com.thoughtworks.rslist.pojo.Vote;
 import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
+import com.thoughtworks.rslist.util.RsVoteRequest;
 import com.thoughtworks.rslist.util.UpdateRsRequest;
 import com.thoughtworks.rslist.service.RsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +54,11 @@ public class RsController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功删除");
     }
 
-
+    @PostMapping("/rs/vote/{rsId}")
+    public ResponseEntity voteRs(@PathVariable Integer rsId,@RequestBody RsVoteRequest rsVoteRequest){
+        rsService.voteRs(rsId,rsVoteRequest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功投票");
+    }
 
 
 

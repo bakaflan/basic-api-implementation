@@ -13,26 +13,23 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @ResponseBody
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Valid User user){
         int index = userService.addUserReturnIndex(user);
         return ResponseEntity.status(HttpStatus.CREATED).header("index",String.valueOf(index)).body("");
     }
 
-    @ResponseBody
     @GetMapping("/user")
     public ResponseEntity getUserByUserName(@RequestParam String userName){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(userName));
     }
 
-    @ResponseBody
     @GetMapping("/user/list")
     public ResponseEntity getUserList(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserList());

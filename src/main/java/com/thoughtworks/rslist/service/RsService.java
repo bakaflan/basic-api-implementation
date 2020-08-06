@@ -69,4 +69,8 @@ public class RsService {
     public void deleteRs(int index) {
         rsList.remove(index);
     }
+
+    public int getRsListSize() {
+        return rsList.size();
+    }
 }

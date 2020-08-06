@@ -215,6 +215,7 @@ public class RsControllerTest {
         jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid param")))
                 .andExpect(status().isBadRequest());
 
         addRsRequest.setKeyword(null);
@@ -222,6 +223,7 @@ public class RsControllerTest {
         jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid param")))
                 .andExpect(status().isBadRequest());
 
         addRsRequest.setKeyword(keyword);
@@ -231,9 +233,27 @@ public class RsControllerTest {
         jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid param")))
                 .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    @Order(8)
+    void should_not_return_rs_list_with_invalid_param() throws Exception {
+        mockMvc.perform(get("/rs/list")
+                .param("start","-1")
+                .param("end","3"))
+                .andExpect(jsonPath("$.error",is("invalid request param")))
+                .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    @Order(8)
+    void should_not_return_rs__with_invalid_index() throws Exception {
+        mockMvc.perform(get("/rs")
+                .param("index","4"))
+                .andExpect(jsonPath("$.error",is("invalid index")))
+                .andExpect(status().isBadRequest());
     }
 
 

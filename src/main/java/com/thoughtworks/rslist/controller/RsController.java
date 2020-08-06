@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.controller;
 
+import com.thoughtworks.rslist.Error.IndexOutOfRange;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
@@ -24,6 +25,9 @@ public class RsController {
     @GetMapping("/rs/list")
     public ResponseEntity getRsList(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end){
         if(start!=null&&end!=null){
+            if(start<0 || end>rsService.getRsListSize()){
+                throw new IndexOutOfRange("invalid request param");
+            }
             return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsByRange(start,end));
         }
         return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsList());
@@ -31,6 +35,9 @@ public class RsController {
 
     @GetMapping("/rs")
     public ResponseEntity getRsByIndex(@RequestParam Integer index){
+        if(index>rsService.getRsListSize()){
+            throw new IndexOutOfRange("invalid index");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsByIndex(index));
     }
 

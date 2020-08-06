@@ -18,14 +18,14 @@ import javax.validation.constraints.*;
 @Validated
 @Builder
 public class User {
-    @NotNull
+    @NotNull(message = "invalid param")
     @Size(max = 8)
     @JsonProperty("user_name")
     private String userName;
-    @NotNull
+    @NotNull(message = "invalid param")
     @JsonProperty("user_gender")
     private String gender;
-    @NotNull
+    @NotNull(message = "invalid param")
     @Min(value = 18)
     @Max(value = 100)
     @JsonProperty("user_age")

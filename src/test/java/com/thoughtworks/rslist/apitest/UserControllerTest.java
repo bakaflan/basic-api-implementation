@@ -83,42 +83,49 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
         user = new User("xiaowangasdfasdfasdf","female",20,"123@thoughtworks.com","18988888888");
         jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
         user = new User("xiaowang",null,20,"123@thoughtworks.com","18988888888");
         jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
         user = new User("xiaowang","female",10,"123@thoughtworks.com","18988888888");
         jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
         user = new User("xiaowang","female",101,"123@thoughtworks.com","18988888888");
         jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
         user = new User("xiaowang","female",20,"thoughtworks.com","18988888888");
         jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
         user = new User("xiaowang","female",20,"123@thoughtworks.com","18988");
         jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.error",is("invalid user")))
                 .andExpect(status().isBadRequest());
 
 

@@ -71,7 +71,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("user_gender",is("female")))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/user").param("id","1"))
+        mockMvc.perform(get("/user").param("id","2"))
                 .andExpect(jsonPath("user_name",is("xiaowang")))
                 .andExpect(jsonPath("user_gender",is("female")))
                 .andExpect(status().isOk());

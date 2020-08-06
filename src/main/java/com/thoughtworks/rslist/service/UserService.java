@@ -83,4 +83,8 @@ public class UserService {
     public void deleteUserById(Integer id){
         userRepository.deleteById(id);
     }
+
+    public void existUserById(Integer id){
+        userRepository.existsById(id);
+    }
 }

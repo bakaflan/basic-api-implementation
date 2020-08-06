@@ -2,8 +2,12 @@ package com.thoughtworks.rslist.apitest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.controller.RsController;
+import com.thoughtworks.rslist.dto.RsDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.User;
+import com.thoughtworks.rslist.repository.RsRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.RsService;
 import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
@@ -27,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RsControllerTest {
     @Autowired
@@ -39,21 +44,34 @@ public class RsControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @BeforeAll
-//    void setUp(){
-//
-//    }
+    @Autowired
+    RsRepository rsRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @BeforeAll
+    void init(){
+        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
+        userRepository.save(UserDto.bind(user));
+    }
+    @BeforeEach
+    void setUp(){
+        Rs rs = new Rs("事件一","第一条事件",1);
+        rsRepository.save(RsDto.bind(rs));
+    }
     @AfterEach
     void backup(){
         rsService.initRsList();
         userService.initUserList();
+        rsRepository.deleteAll();
     }
 
     @Test
     @Order(0)
     void shouldd_return_re_List() throws Exception {
         mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$",hasSize(3)))
+                .andExpect(jsonPath("$",hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
                 .andExpect(status().isOk());
     }
@@ -73,7 +91,7 @@ public class RsControllerTest {
         mockMvc.perform(get("/rs/list")
                 .param("start","0")
                 .param("end","2"))
-                .andExpect(jsonPath("$",hasSize(2)))
+                .andExpect(jsonPath("$",hasSize(1)))
                 .andExpect(jsonPath("$[1].eventName",is("第二条事件")))
                 .andExpect(status().isOk());
     }
@@ -86,6 +104,7 @@ public class RsControllerTest {
                 "  \"keyword\":\"这是一个关键字\",\n" +
                 "  \"eventName\":\"这是一个事件\"\n" +
                 "}";
+
 
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
@@ -151,19 +170,16 @@ public class RsControllerTest {
     @Test
     @Order(6)
     void should_add_rs_with_user() throws Exception {
-        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
         String eventName = "添加一条热搜";
         String keyword = "娱乐";
-        AddRsRequest addRsRequest = new AddRsRequest(eventName,keyword,user);
+        AddRsRequest addRsRequest = new AddRsRequest(eventName,keyword,1);
         String jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(header().string("index","3"))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$",hasSize(4)))
-//                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
+                .andExpect(jsonPath("$",hasSize(2)))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/user").param("userName","xiaowang"))
@@ -174,10 +190,9 @@ public class RsControllerTest {
     @Test
     @Order(7)
     void should_add_rs_with_exist_user() throws Exception {
-        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
         String eventName = "添加一条热搜";
         String keyword = "娱乐";
-        AddRsRequest addRsRequest = new AddRsRequest(eventName,keyword,user);
+        AddRsRequest addRsRequest = new AddRsRequest(eventName,keyword,1);
         String jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
@@ -205,10 +220,9 @@ public class RsControllerTest {
     @Test
     @Order(7)
     void should_not_add_rs_after_validate() throws Exception {
-        User user = new User("xiaowang", "female", 20, "123@thoughtworks.com", "18988888888");
         String eventName = "添加一条热搜";
         String keyword = "娱乐";
-        AddRsRequest addRsRequest = new AddRsRequest(eventName, keyword, user);
+        AddRsRequest addRsRequest = new AddRsRequest(eventName, keyword, 1);
         String jsonString = objectMapper.writeValueAsString(addRsRequest);
 
         addRsRequest.setEventName(null);
@@ -226,15 +240,15 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$.error",is("invalid param")))
                 .andExpect(status().isBadRequest());
 
-        addRsRequest.setKeyword(keyword);
-        addRsRequest.setEventName(eventName);
-        user.setUserName(null);
-        addRsRequest.setUser(user);
-        jsonString = objectMapper.writeValueAsString(addRsRequest);
-        mockMvc.perform(post("/rs")
-                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.error",is("invalid param")))
-                .andExpect(status().isBadRequest());
+//        addRsRequest.setKeyword(keyword);
+//        addRsRequest.setEventName(eventName);
+//        user.setUserName(null);
+//        addRsRequest.setUser(user);
+//        jsonString = objectMapper.writeValueAsString(addRsRequest);
+//        mockMvc.perform(post("/rs")
+//                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+//                .andExpect(jsonPath("$.error",is("invalid param")))
+//                .andExpect(status().isBadRequest());
     }
 
     @Test

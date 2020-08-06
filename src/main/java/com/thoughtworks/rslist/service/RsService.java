@@ -1,18 +1,31 @@
 package com.thoughtworks.rslist.service;
 
+import com.thoughtworks.rslist.Exception.UserNotExistedException;
+import com.thoughtworks.rslist.dto.RsDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.pojo.Rs;
+import com.thoughtworks.rslist.repository.RsRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.util.AddRsRequest;
 import com.thoughtworks.rslist.util.UpdateRsRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RsService {
 
     private List<Rs> rsList;
+
+    @Autowired
+    private RsRepository rsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public RsService() {
         this.rsList = new ArrayList<>();
@@ -31,20 +44,14 @@ public class RsService {
         return rsList;
     }
 
-    public void addRs(AddRsRequest addRsRequest) {
-        this.rsList.add(Rs.builder()
-                .keyword(addRsRequest.getKeyword())
+    public void createRs(AddRsRequest addRsRequest){
+        if(!userRepository.existsById(addRsRequest.getUserId())){
+            throw new UserNotExistedException("user not exist");
+        }
+        rsRepository.save(RsDto.builder()
                 .eventName(addRsRequest.getEventName())
-                .user(addRsRequest.getUser())
-                .build());
-    }
-
-    public int addRsReturnIndex(AddRsRequest addRsRequest) {
-        addRs(addRsRequest);
-        return rsList.indexOf(rsList.stream()
-                .filter(i->i.getEventName().equals(addRsRequest.getEventName()))
-                .findFirst()
-                .get());
+                .keyword(addRsRequest.getKeyword())
+                .userId(addRsRequest.getUserId()).build());
     }
 
     public String getRsByIndex(int index) {
@@ -72,5 +79,9 @@ public class RsService {
 
     public int getRsListSize() {
         return rsList.size();
+    }
+
+    public List<Rs> findAll() {
+        return rsRepository.findAll().stream().map(RsDto::parse).collect(Collectors.toList());
     }
 }

@@ -21,14 +21,8 @@ public class RsController {
     private UserService userService;
 
     @GetMapping("/rs/list")
-    public ResponseEntity getRsList(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end){
-        if(start!=null&&end!=null){
-            if(start<0 || end>rsService.getRsListSize()|| start>end){
-                throw new IndexOutOfRange("invalid request param");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsByRange(start,end));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsList());
+    public ResponseEntity getRsList(){
+        return ResponseEntity.status(HttpStatus.OK).body(rsService.findAll());
     }
 
     @GetMapping("/rs")
@@ -40,10 +34,9 @@ public class RsController {
     }
 
     @PostMapping("/rs")
-    public ResponseEntity adddRs(@RequestBody@Valid AddRsRequest addRsRequest){
-      int index = rsService.addRsReturnIndex(addRsRequest);
-      userService.addUser(addRsRequest.getUser());
-      return ResponseEntity.status(HttpStatus.CREATED).header("index",String.valueOf(index)).body("");
+    public ResponseEntity createRs(@RequestBody@Valid AddRsRequest addRsRequest){
+       rsService.createRs(addRsRequest);
+       return ResponseEntity.status(HttpStatus.CREATED).body("创建成功");
     }
 
     @PatchMapping("/rs")

@@ -22,5 +22,5 @@ public class AddRsRequest {
     @NotNull
     private String keyword;
     @Valid
-    private User user;
+    private Integer userId;
 }

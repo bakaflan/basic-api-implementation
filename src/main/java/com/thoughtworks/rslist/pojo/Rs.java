@@ -25,7 +25,7 @@ public class Rs {
     @NotNull
     private String eventName;
     @JsonIgnore
-    private User user;
+    private Integer userId;
 
     public Rs(String keyword, String eventName) {
         this.keyword = keyword;

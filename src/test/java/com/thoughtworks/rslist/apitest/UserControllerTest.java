@@ -98,7 +98,7 @@ public class UserControllerTest {
 
         mockMvc.perform(get("/user/list"))
                 .andExpect(jsonPath("$",hasSize(2)))
-                .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
+                .andExpect(jsonPath("$[1].user_name",is("xiaowang")))
                 .andExpect(status().isOk());
     }
 
@@ -167,16 +167,16 @@ public class UserControllerTest {
 
         mockMvc.perform(get("/user/list"))
                 .andExpect(jsonPath("$",hasSize(2)))
-                 .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
+                 .andExpect(jsonPath("$[1].user_name",is("xiaowang")))
                 .andExpect(status().isOk());
 
         mockMvc.perform(delete("/user")
-                .param("id","1"))
+                .param("id","2"))
                 .andExpect(content().string("删除成功"))
                 .andExpect(status().isAccepted());
 
         mockMvc.perform(get("/user/list"))
-                .andExpect(jsonPath("$",hasSize(0)))
+                .andExpect(jsonPath("$",hasSize(1)))
                 .andExpect(status().isOk());
     }
 

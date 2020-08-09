@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.controller;
 
 import com.thoughtworks.rslist.Exception.IndexOutOfRange;
 import com.thoughtworks.rslist.dto.RsDto;
+import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.Vote;
 import com.thoughtworks.rslist.service.UserService;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 public class RsController {
@@ -60,6 +63,16 @@ public class RsController {
     public ResponseEntity deleteRsById(@RequestParam Integer id){
         rsService.deleteRsById(id);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功删除");
+    }
+
+    @GetMapping("/rs/vote/list")
+    public ResponseEntity getVoteList(
+            @RequestParam(required = false) String start,
+            @RequestParam(required = false) String end,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize){
+        List<VoteDto> voteDtoList = rsService.findVoteAll(start,end,pageNum-1,pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(voteDtoList);
     }
 
 

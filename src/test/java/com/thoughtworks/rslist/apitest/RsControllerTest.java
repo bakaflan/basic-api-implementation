@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.controller.RsController;
 import com.thoughtworks.rslist.dto.RsDto;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.repository.RsRepository;
@@ -25,6 +26,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+
+import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -293,6 +296,43 @@ public class RsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(jsonPath("$.message",is("has not enough num of vote")))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_get_vote_during_time_range() throws Exception {
+        LocalDateTime localDateTime = LocalDateTime.of(2018,1,1,1,1,1);
+        voteRepository.save(VoteDto.builder()
+                .userId(1)
+                .rsId(1)
+                .voteNum(5)
+                .time(localDateTime).build());
+
+        //language=JSON
+        String jsonString = "{\n" +
+                "  \"voteNum\":5,\n" +
+                "  \"userId\": 1\n" +
+                "}";
+        mockMvc.perform(post("/rs/vote/1")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(status().isAccepted());
+
+        mockMvc.perform(get("/rs")
+                .param("id","1"))
+                .andExpect(jsonPath("$.eventName",is("第一条事件")))
+                .andExpect(jsonPath("$.keyword",is("事件一")))
+                .andExpect(jsonPath("$.id",is(1)))
+                .andExpect(jsonPath("$.voteNum",is(5)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/vote/list"))
+                .andExpect(jsonPath("$",hasSize(2)))
+                .andExpect(jsonPath("$[1].time",is(localDateTime.toString())));
+
+        mockMvc.perform(get("/rs/vote/list")
+                .param("start","2016-01-01T01:01:01")
+                .param("end","2019-01-01T01:01:01"))
+                .andExpect(jsonPath("$",hasSize(1)))
+                .andExpect(jsonPath("$[0].time",is(localDateTime.toString())));
     }
 
 }

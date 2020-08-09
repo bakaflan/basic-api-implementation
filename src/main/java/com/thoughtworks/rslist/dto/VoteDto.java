@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,5 +34,6 @@ public class VoteDto {
     private Integer rsId;
 
     private int voteNum;
+    @DateTimeFormat
     private LocalDateTime time;
 }

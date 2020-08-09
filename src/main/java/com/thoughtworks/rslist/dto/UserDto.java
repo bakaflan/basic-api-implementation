@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
@@ -35,7 +36,7 @@ public class UserDto {
     private String phone;
     private int voteNum;
 
-    @OneToMany(targetEntity = RsDto.class, cascade=CascadeType.ALL)
+    @OneToMany(targetEntity = RsDto.class, mappedBy = "user",cascade = CascadeType.ALL)
     private List<RsDto> rsDtoList = new ArrayList<>();
 
     public static UserDto bind(User user){

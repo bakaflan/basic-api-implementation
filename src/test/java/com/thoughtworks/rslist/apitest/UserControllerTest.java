@@ -42,7 +42,6 @@ public class UserControllerTest {
         userRepository.deleteAll();
         userRepository.initAutoIncrement();
         userRepository.save(UserDto.builder().userName("ruiling")
-                .Id(1)
                 .gender("male")
                 .age(22)
                 .email("ruiling1@thoughtworks.com")

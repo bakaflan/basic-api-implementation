@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.service;
 
+import com.thoughtworks.rslist.Exception.UserNotExistedException;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.repository.UserRepository;

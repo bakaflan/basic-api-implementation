@@ -1,5 +1,7 @@
 package com.thoughtworks.rslist.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.User;
 import lombok.AllArgsConstructor;
@@ -21,11 +23,15 @@ public class RsDto {
     private int id;
     private String eventName;
     private String keyword;
+    private int voteNum = 0;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id",insertable = false,updatable = false)
-    private UserDto userDto;
+    @JsonIgnore
+    @ManyToOne(targetEntity = UserDto.class)
+    @JoinColumn(name = "user_id",referencedColumnName = "id",insertable = false,updatable = false)
+    private UserDto user;
+
     @Column(name = "user_id")
+    @JsonIgnore
     private Integer userId;
 
 
@@ -50,5 +56,9 @@ public class RsDto {
         if(keyword!=null){
             this.keyword = keyword;
         }
+    }
+
+    public void vote(Integer voteNum){
+        this.voteNum += voteNum;
     }
 }

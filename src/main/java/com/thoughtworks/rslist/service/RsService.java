@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 public class RsService {
 
-    private List<Rs> rsList;
 
     @Autowired
     private RsRepository rsRepository;
@@ -37,28 +36,6 @@ public class RsService {
     private VoteRepository voteRepository;
 
     public RsService() {
-        this.rsList = new ArrayList<>();
-        this.initRsList();
-    }
-
-    public void initRsList() {
-        List<Rs> initRsList = new ArrayList<>();
-        initRsList.add(new Rs("事件一", "第一条事件"));
-        initRsList.add(new Rs("事件二", "第二条事件"));
-        initRsList.add(new Rs("事件三", "第三条事件"));
-        rsList = initRsList;
-    }
-
-    public List<Rs> getRsList() {
-        return rsList;
-    }
-
-    public String getRsByIndex(int index) {
-        return rsList.get(index).getEventName();
-    }
-
-    public List<Rs> getRsByRange(int start, int end) {
-        return rsList.subList(start, end);
     }
 
     @Transactional
@@ -73,14 +50,6 @@ public class RsService {
         }
         rsDto.update(updateRsRequest.getEventName(), updateRsRequest.getKeyword());
         return rsRepository.save(rsDto);
-    }
-
-    public void deleteRs(int index) {
-        rsList.remove(index);
-    }
-
-    public int getRsListSize() {
-        return rsList.size();
     }
 
     @Transactional
@@ -102,25 +71,44 @@ public class RsService {
 
     @Transactional
     public void voteRs(Integer rsId, RsVoteRequest rsVoteRequest) {
-        if (!rsRepository.existsById(rsId)) {
+        Optional<RsDto> optionalRs = rsRepository.findById(rsId);
+        if (!optionalRs.isPresent()) {
             throw new RsException("rs is not exist");
         }
+        RsDto rsDto = optionalRs.get();
         Optional<UserDto> optionalUserDto = userRepository.findById(rsVoteRequest.getUserId());
         if (!optionalUserDto.isPresent()) {
             throw new UserNotExistedException("user not exist");
         }
         UserDto userDto = optionalUserDto.get();
         if (userDto.getVoteNum() < rsVoteRequest.getVoteNum()) {
-            throw new RsException("has not enough vote num");
+            throw new RsException("has not enough num of vote");
         }
         userDto.vote(rsVoteRequest.getVoteNum());
+        rsDto.vote(rsVoteRequest.getVoteNum());
         voteRepository.save(VoteDto.builder()
                 .rsId(rsId)
                 .userId(rsVoteRequest.getUserId())
                 .time(LocalDateTime.now())
                 .voteNum(rsVoteRequest.getVoteNum()).build());
-
         userRepository.save(userDto);
+        rsRepository.save(rsDto);
 
+
+    }
+
+    public RsDto findRsById(Integer rsId){
+        Optional<RsDto> optionalRsDto = rsRepository.findById(rsId);
+        if(!optionalRsDto.isPresent()){
+            throw new RsException("Rs is not existed");
+        }
+        return optionalRsDto.get();
+    }
+
+    public void deleteRsById(Integer rsId) {
+        if(!rsRepository.existsById(rsId)){
+            throw new RsException("rs id is not existed");
+        }
+        rsRepository.deleteById(rsId);
     }
 }

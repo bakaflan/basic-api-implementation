@@ -30,11 +30,9 @@ public class RsController {
     }
 
     @GetMapping("/rs")
-    public ResponseEntity getRsByIndex(@RequestParam Integer index){
-        if(index>rsService.getRsListSize()){
-            throw new IndexOutOfRange("invalid index");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(rsService.getRsByIndex(index));
+    public ResponseEntity findRsById(@RequestParam Integer id){
+        return ResponseEntity.status(HttpStatus.OK).body(rsService.findRsById(id));
+
     }
 
     @PostMapping("/rs")
@@ -52,18 +50,17 @@ public class RsController {
 
     }
 
-    @DeleteMapping("/rs")
-    public ResponseEntity deleteRsWithIndex(@RequestParam int index){
-        rsService.deleteRs(index);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功删除");
-    }
-
     @PostMapping("/rs/vote/{rsId}")
     public ResponseEntity voteRs(@PathVariable Integer rsId,@RequestBody RsVoteRequest rsVoteRequest){
         rsService.voteRs(rsId,rsVoteRequest);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功投票");
     }
 
+    @DeleteMapping("/rs")
+    public ResponseEntity deleteRsById(@RequestParam Integer id){
+        rsService.deleteRsById(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功删除");
+    }
 
 
 }

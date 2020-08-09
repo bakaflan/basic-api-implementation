@@ -58,25 +58,26 @@ public class RsControllerTest {
 
     @BeforeAll
     void init(){
-        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
-        userRepository.save(UserDto.bind(user));
+
     }
     @BeforeEach
     void setUp(){
+        userRepository.deleteAll();
+        rsRepository.deleteAll();
+        voteRepository.deleteAll();
+
+        rsRepository.initAutoIncrement();
+        userRepository.initAutoIncrement();
+
+
+        User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
+        userRepository.save(UserDto.bind(user));
+
         Rs rs = new Rs("事件一","第一条事件",1);
         rsRepository.save(RsDto.bind(rs));
-
-    }
-    @AfterEach
-    void backup(){
-        rsRepository.deleteAll();
-        rsRepository.initAutoIncrement();
-        userRepository.deleteAll();
-        userRepository.initAutoIncrement();
     }
 
     @Test
-    @Order(0)
     void shouldd_return_re_List() throws Exception {
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(1)))
@@ -85,11 +86,13 @@ public class RsControllerTest {
     }
 
     @Test
-    @Order(1)
-    void should_get_rs_by_index_of_rs() throws Exception {
+    void should_get_rs_by_id() throws Exception {
         mockMvc.perform(get("/rs")
-                .param("index","0"))
-                .andExpect(content().string("第一条事件"))
+                .param("id","1"))
+                .andExpect(jsonPath("$.eventName",is("第一条事件")))
+                .andExpect(jsonPath("$.keyword",is("事件一")))
+                .andExpect(jsonPath("$.id",is(1)))
+                .andExpect(jsonPath("$.voteNum",is(0)))
                 .andExpect(status().isOk());
     }
 //TODO
@@ -105,7 +108,6 @@ public class RsControllerTest {
 //    }
 
     @Test
-    @Order(3)
     void should_add_rs_with_keyword_and_eventName() throws Exception {
         //language=JSON
         String requestJson = "{\n" +
@@ -116,20 +118,17 @@ public class RsControllerTest {
 
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(header().string("index",notNullValue()))
+                .andExpect(header().string("index",is("2")))
+                .andExpect(jsonPath("$.eventName",is("这是一个事件")))
                 .andExpect(status().isCreated());
-
-
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(2)))
                 .andExpect(jsonPath("$[1].eventName",is("这是一个事件")))
                 .andExpect(status().isOk());
-
     }
 
     @Test
-    @Order(4)
     void should_update_rs_with_userId_and_keyword_and_eventName() throws Exception {
         //language=JSON
         String requestJson = "{\n" +
@@ -138,7 +137,7 @@ public class RsControllerTest {
                 "  \"userId\": 1\n" +
                 "}";
 
-        String response = mockMvc.perform(patch("/rs/2")
+        String response = mockMvc.perform(patch("/rs/1")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andExpect(jsonPath("$.eventName",is("第一条事件改")))
                 .andExpect(status().isAccepted())
@@ -152,41 +151,44 @@ public class RsControllerTest {
                 .andExpect(status().isOk());
 
     }
-//TODO
-//    @Test
-//    @Order(4)
-//    void should_not_update_rs_with_wrong_userId_and_keyword_and_eventName() throws Exception {
-//        //language=JSON
-//        String requestJson = "{\n" +
-//                "  \"keyword\":\"事件一改\",\n" +
-//                "  \"eventName\":\"第一条事件改\",\n" +
-//                "  \"userId\": 2\n" +
-//                "}";
-//
-//        mockMvc.perform(patch("/rs/2")
-//                .contentType(MediaType.APPLICATION_JSON).content(requestJson))
-//                .andExpect(jsonPath("$.message",is("rs is not belong to this user")))
-//                .andExpect(status().isBadRequest());
-//
-//    }
-//TODO
-//    @Test
-//    @Order(5)
-//    void should_delete_rs_with_index() throws Exception {
-//        mockMvc.perform(delete("/rs")
-//                .param("index","1"))
-//                .andExpect(content().string("成功删除"))
-//                .andExpect(status().isAccepted());
-//        mockMvc.perform(get("/rs/list"))
-//                .andExpect(jsonPath("$",hasSize(2)))
-//                .andExpect(jsonPath("$[0].eventName",is("第一条事件")))
-//                .andExpect(jsonPath("$[1].eventName",is("第三条事件")))
-//                .andExpect(status().isOk());
-//
-//    }
 
     @Test
-    @Order(6)
+    @Order(4)
+    void should_not_update_rs_with_wrong_userId_and_keyword_and_eventName() throws Exception {
+        //language=JSON
+        String requestJson = "{\n" +
+                "  \"keyword\":\"事件一改\",\n" +
+                "  \"eventName\":\"第一条事件改\",\n" +
+                "  \"userId\": 2\n" +
+                "}";
+
+        mockMvc.perform(patch("/rs/1")
+                .contentType(MediaType.APPLICATION_JSON).content(requestJson))
+                .andExpect(jsonPath("$.message",is("rs is not belong to this user")))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @Order(5)
+    void should_delete_rs_with_index() throws Exception {
+        mockMvc.perform(delete("/rs")
+                .param("id","1"))
+                .andExpect(content().string("成功删除"))
+                .andExpect(status().isAccepted());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$",hasSize(0)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/rs")
+                .param("id","1"))
+                .andExpect(jsonPath("$.message",is("rs id is not existed")))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
     void should_add_rs_with_user() throws Exception {
         String eventName = "添加一条热搜";
         String keyword = "娱乐";
@@ -206,7 +208,6 @@ public class RsControllerTest {
     }
 
     @Test
-    @Order(7)
     void should_add_rs_with_exist_user() throws Exception {
         String eventName = "添加一条热搜";
         String keyword = "娱乐";
@@ -214,18 +215,18 @@ public class RsControllerTest {
         String jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(header().string("index","3"))
+                .andExpect(header().string("index","2"))
                 .andExpect(status().isCreated());
 
         addRsRequest.setEventName("添加第二条热搜");
         jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(header().string("index","4"))
+                .andExpect(header().string("index","3"))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/list"))
-                .andExpect(jsonPath("$",hasSize(5)))
+                .andExpect(jsonPath("$",hasSize(3)))
 //                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
                 .andExpect(status().isOk());
 
@@ -236,7 +237,6 @@ public class RsControllerTest {
     }
 
     @Test
-    @Order(7)
     void should_not_add_rs_after_validate() throws Exception {
         String eventName = "添加一条热搜";
         String keyword = "娱乐";
@@ -247,7 +247,7 @@ public class RsControllerTest {
         jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.error",is("invalid param")))
+                .andExpect(jsonPath("$.message",is("invalid param")))
                 .andExpect(status().isBadRequest());
 
         addRsRequest.setKeyword(null);
@@ -255,41 +255,54 @@ public class RsControllerTest {
         jsonString = objectMapper.writeValueAsString(addRsRequest);
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.error",is("invalid param")))
+                .andExpect(jsonPath("$.message",is("invalid param")))
                 .andExpect(status().isBadRequest());
 
     }
 
-    @Test
-    @Order(8)
-    void should_not_return_rs_list_with_invalid_param() throws Exception {
-        mockMvc.perform(get("/rs/list")
-                .param("start","-1")
-                .param("end","3"))
-                .andExpect(jsonPath("$.error",is("invalid request param")))
-                .andExpect(status().isBadRequest());
-    }
+//    @Test
+//    void should_not_return_rs_list_with_invalid_param() throws Exception {
+//        mockMvc.perform(get("/rs/list")
+//                .param("start","-1")
+//                .param("end","3"))
+//                .andExpect(jsonPath("$.error",is("invalid request param")))
+//                .andExpect(status().isBadRequest());
+//    }
+
+//    @Test
+//    void should_not_return_rs__with_invalid_index() throws Exception {
+//        mockMvc.perform(get("/rs")
+//                .param("id","4"))
+//                .andExpect(jsonPath("$.message",is("invalid index")))
+//                .andExpect(status().isBadRequest());
+//    }
 
     @Test
-    @Order(8)
-    void should_not_return_rs__with_invalid_index() throws Exception {
-        mockMvc.perform(get("/rs")
-                .param("index","4"))
-                .andExpect(jsonPath("$.message",is("invalid index")))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void should_vote_rs() throws Exception {
+    void should_vote_rs_with_existed_userId() throws Exception {
         //language=JSON
         String jsonString = "{\n" +
                 "  \"voteNum\":5,\n" +
                 "  \"userId\": 1\n" +
                 "}";
-        mockMvc.perform(post("/rs/vote/2")
+        mockMvc.perform(post("/rs/vote/1")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isAccepted());
+
+
     }
 
+
+    @Test
+    void should_not_vote_rs_if_user_voteNum_less_than_votes() throws Exception {
+        //language=JSON
+        String jsonString = "{\n" +
+                "  \"voteNum\":12,\n" +
+                "  \"userId\": 1\n" +
+                "}";
+        mockMvc.perform(post("/rs/vote/1")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonString))
+                .andExpect(jsonPath("$.message",is("has not enough num of vote")))
+                .andExpect(status().isBadRequest());
+    }
 
 }

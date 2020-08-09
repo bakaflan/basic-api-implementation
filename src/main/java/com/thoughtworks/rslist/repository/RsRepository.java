@@ -35,4 +35,6 @@ public interface RsRepository extends CrudRepository<RsDto,Integer> {
     @Query(value = "alter table rs auto_increment = 1",nativeQuery = true)
     void initAutoIncrement();
 
+    @Override
+    boolean existsById(Integer integer);
 }

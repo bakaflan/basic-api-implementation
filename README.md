@@ -47,7 +47,7 @@
   注意：需要修改热搜事件返回的数据结构，使其返回热搜事件id和获得的票数:
     ```
         {
-            eventName: "event name",z
+            eventName: "event name",
             keyword: "keyword",
             id: "id",
             voteNum: 10

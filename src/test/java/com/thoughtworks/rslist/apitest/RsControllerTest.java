@@ -227,7 +227,6 @@ public class RsControllerTest {
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(3)))
-//                .andExpect(jsonPath("$[3].user.userName",is("xiaowang")))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/user/list"))
@@ -260,22 +259,6 @@ public class RsControllerTest {
 
     }
 
-//    @Test
-//    void should_not_return_rs_list_with_invalid_param() throws Exception {
-//        mockMvc.perform(get("/rs/list")
-//                .param("start","-1")
-//                .param("end","3"))
-//                .andExpect(jsonPath("$.error",is("invalid request param")))
-//                .andExpect(status().isBadRequest());
-//    }
-
-//    @Test
-//    void should_not_return_rs__with_invalid_index() throws Exception {
-//        mockMvc.perform(get("/rs")
-//                .param("id","4"))
-//                .andExpect(jsonPath("$.message",is("invalid index")))
-//                .andExpect(status().isBadRequest());
-//    }
 
     @Test
     void should_vote_rs_with_existed_userId() throws Exception {

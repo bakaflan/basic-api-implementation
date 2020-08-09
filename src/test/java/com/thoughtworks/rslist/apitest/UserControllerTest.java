@@ -43,7 +43,7 @@ public class UserControllerTest {
 
     @AfterEach
     void backup(){
-        userService.initUserList();
+
     }
 
 
@@ -53,7 +53,7 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("保存成功"))
+                .andExpect(jsonPath("$.user_name",is("xiaowang")))
                 .andExpect(status().isCreated());
     }
 
@@ -63,7 +63,7 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("保存成功"))
+                .andExpect(jsonPath("$.user_name",is("xiaowang")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user").param("userName","xiaowang"))
@@ -83,7 +83,7 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("保存成功"))
+                .andExpect(jsonPath("$.user_name",is("xiaowang")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user/list"))
@@ -152,7 +152,7 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(content().string("保存成功"))
+                .andExpect(jsonPath("$.user_name",is("xiaowang")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user/list"))

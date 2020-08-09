@@ -4,10 +4,11 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.dto.VoteDto;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Component
+@Repository
 public interface VoteRepository extends CrudRepository<VoteDto,Integer> {
     @Override
     <S extends VoteDto> S save(S entity);

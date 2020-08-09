@@ -8,6 +8,7 @@ import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.repository.RsRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import com.thoughtworks.rslist.service.RsService;
 import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
@@ -20,11 +21,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -50,6 +53,9 @@ public class RsControllerTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    VoteRepository voteRepository;
+
     @BeforeAll
     void init(){
         User user = new User("xiaowang","female",20,"123@thoughtworks.com","18988888888");
@@ -59,11 +65,11 @@ public class RsControllerTest {
     void setUp(){
         Rs rs = new Rs("事件一","第一条事件",1);
         rsRepository.save(RsDto.bind(rs));
+
     }
     @AfterEach
     void backup(){
         rsService.initRsList();
-        userService.initUserList();
         rsRepository.deleteAll();
     }
 
@@ -108,7 +114,10 @@ public class RsControllerTest {
 
         mockMvc.perform(post("/rs")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
+                .andExpect(header().string("index",notNullValue()))
                 .andExpect(status().isCreated());
+
+
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(2)))
@@ -127,10 +136,13 @@ public class RsControllerTest {
                 "  \"userId\": 1\n" +
                 "}";
 
-        mockMvc.perform(patch("/rs/2")
+        String response = mockMvc.perform(patch("/rs/2")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(content().string("成功更新"))
-                .andExpect(status().isAccepted());
+                .andExpect(jsonPath("$.eventName",is("第一条事件改")))
+                .andExpect(status().isAccepted())
+                .andReturn().getResponse().getContentAsString();
+
+        RsDto rsDto = objectMapper.readValue(response,RsDto.class);
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(1)))

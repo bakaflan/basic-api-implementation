@@ -1,6 +1,8 @@
 package com.thoughtworks.rslist.controller;
 
 import com.thoughtworks.rslist.Exception.IndexOutOfRange;
+import com.thoughtworks.rslist.dto.RsDto;
+import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.Vote;
 import com.thoughtworks.rslist.service.UserService;
 import com.thoughtworks.rslist.util.AddRsRequest;
@@ -37,14 +39,16 @@ public class RsController {
 
     @PostMapping("/rs")
     public ResponseEntity createRs(@RequestBody@Valid AddRsRequest addRsRequest){
-       rsService.createRs(addRsRequest);
-       return ResponseEntity.status(HttpStatus.CREATED).body("创建成功");
+       RsDto rsDto = rsService.createRs(addRsRequest);
+       return ResponseEntity.status(HttpStatus.CREATED)
+               .header("index", String.valueOf(rsDto.getId()))
+               .body(rsDto);
     }
 
     @PatchMapping("/rs/{rsId}")
-    public ResponseEntity updateRs(@PathVariable Integer rsId,@RequestBody UpdateRsRequest updateRsRequest){
-        rsService.updateRs(rsId,updateRsRequest);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("成功更新");
+    public ResponseEntity<RsDto> updateRs(@PathVariable Integer rsId,@RequestBody UpdateRsRequest updateRsRequest){
+        RsDto rsDto = rsService.updateRs(rsId,updateRsRequest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(rsDto);
 
     }
 

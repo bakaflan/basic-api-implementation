@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.rslist.pojo.Rs;
 import com.thoughtworks.rslist.pojo.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +35,7 @@ public class UserDto {
     private String phone;
     private int voteNum;
 
-    @OneToMany
+    @OneToMany(targetEntity = RsDto.class, cascade=CascadeType.ALL)
     private List<RsDto> rsDtoList = new ArrayList<>();
 
     public static UserDto bind(User user){

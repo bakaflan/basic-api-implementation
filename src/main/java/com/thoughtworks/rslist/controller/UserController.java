@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.controller;
 
 
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity registerUser(@RequestBody @Valid User user){
-        userService.creatUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body("保存成功");
+    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid User user){
+        UserDto dto = userService.creatUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @GetMapping("/user")

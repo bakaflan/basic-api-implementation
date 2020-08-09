@@ -42,14 +42,14 @@ public class RsService {
     }
 
     public void initRsList() {
-        List<Rs> initRsList =  new ArrayList<>();
-        initRsList.add(new Rs("事件一","第一条事件"));
-        initRsList.add(new Rs("事件二","第二条事件"));
-        initRsList.add(new Rs("事件三","第三条事件"));
+        List<Rs> initRsList = new ArrayList<>();
+        initRsList.add(new Rs("事件一", "第一条事件"));
+        initRsList.add(new Rs("事件二", "第二条事件"));
+        initRsList.add(new Rs("事件三", "第三条事件"));
         rsList = initRsList;
     }
 
-    public List<Rs> getRsList(){
+    public List<Rs> getRsList() {
         return rsList;
     }
 
@@ -62,17 +62,17 @@ public class RsService {
     }
 
     @Transactional
-    public void updateRs(Integer rsId,UpdateRsRequest updateRsRequest) {
+    public RsDto updateRs(Integer rsId, UpdateRsRequest updateRsRequest) {
         Optional<RsDto> optionalRsDto = rsRepository.findById(rsId);
-        if(!optionalRsDto.isPresent()){
+        if (!optionalRsDto.isPresent()) {
             throw new RsException("rs is not exist");
         }
         RsDto rsDto = optionalRsDto.get();
-        if(!rsDto.getUserId().equals(updateRsRequest.getUserId())){
+        if (!rsDto.getUserId().equals(updateRsRequest.getUserId())) {
             throw new RsException("rs is not belong to this user");
         }
-        rsDto.update(updateRsRequest.getEventName(),updateRsRequest.getKeyword());
-        rsRepository.save(rsDto);
+        rsDto.update(updateRsRequest.getEventName(), updateRsRequest.getKeyword());
+        return rsRepository.save(rsDto);
     }
 
     public void deleteRs(int index) {
@@ -84,14 +84,15 @@ public class RsService {
     }
 
     @Transactional
-    public void createRs(AddRsRequest addRsRequest){
-        if(!userRepository.existsById(addRsRequest.getUserId())){
+    public RsDto createRs(AddRsRequest addRsRequest) {
+        if (!userRepository.existsById(addRsRequest.getUserId())) {
             throw new UserNotExistedException("user not exist");
         }
-        rsRepository.save(RsDto.builder()
+        RsDto dto = rsRepository.save(RsDto.builder()
                 .eventName(addRsRequest.getEventName())
                 .keyword(addRsRequest.getKeyword())
                 .userId(addRsRequest.getUserId()).build());
+        return dto;
     }
 
     public List<Rs> findAll() {
@@ -101,15 +102,15 @@ public class RsService {
 
     @Transactional
     public void voteRs(Integer rsId, RsVoteRequest rsVoteRequest) {
-        if(!rsRepository.existsById(rsId)){
+        if (!rsRepository.existsById(rsId)) {
             throw new RsException("rs is not exist");
         }
-        Optional<UserDto> optionalUserDto= userRepository.findById(rsVoteRequest.getUserId());
-        if(!optionalUserDto.isPresent()){
+        Optional<UserDto> optionalUserDto = userRepository.findById(rsVoteRequest.getUserId());
+        if (!optionalUserDto.isPresent()) {
             throw new UserNotExistedException("user not exist");
         }
         UserDto userDto = optionalUserDto.get();
-        if(userDto.getVoteNum()<rsVoteRequest.getVoteNum()){
+        if (userDto.getVoteNum() < rsVoteRequest.getVoteNum()) {
             throw new RsException("has not enough vote num");
         }
         userDto.vote(rsVoteRequest.getVoteNum());

@@ -271,6 +271,13 @@ public class RsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isAccepted());
 
+        mockMvc.perform(get("/rs")
+                .param("id","1"))
+                .andExpect(jsonPath("$.eventName",is("第一条事件")))
+                .andExpect(jsonPath("$.keyword",is("事件一")))
+                .andExpect(jsonPath("$.id",is(1)))
+                .andExpect(jsonPath("$.voteNum",is(5)))
+                .andExpect(status().isOk());
 
     }
 

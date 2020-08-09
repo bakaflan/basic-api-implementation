@@ -36,8 +36,8 @@ public class UserDto {
     private String phone;
     private int voteNum;
 
-    @OneToMany(targetEntity = RsDto.class, mappedBy = "user",cascade = CascadeType.ALL)
-    private List<RsDto> rsDtoList = new ArrayList<>();
+    @OneToMany(mappedBy = "userDto",cascade = CascadeType.REMOVE)
+    private List<RsDto> rsDtoList;
 
     public static UserDto bind(User user){
         return UserDto.builder()

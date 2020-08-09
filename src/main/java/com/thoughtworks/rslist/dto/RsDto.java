@@ -28,7 +28,7 @@ public class RsDto {
     @JsonIgnore
     @ManyToOne(targetEntity = UserDto.class)
     @JoinColumn(name = "user_id",referencedColumnName = "id",insertable = false,updatable = false)
-    private UserDto user;
+    private UserDto userDto;
 
     @Column(name = "user_id")
     @JsonIgnore

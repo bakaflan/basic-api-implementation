@@ -81,7 +81,7 @@ public class RsControllerTest {
     }
 
     @Test
-    void shouldd_return_re_List() throws Exception {
+    void should_return_rs_List() throws Exception {
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$",hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName",is("第一条事件")))

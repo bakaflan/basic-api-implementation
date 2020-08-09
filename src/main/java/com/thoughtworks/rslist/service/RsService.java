@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,20 +33,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class RsService {
 
-
-    @Autowired
     private RsRepository rsRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private VoteRepository voteRepository;
 
-    public RsService() {
+    public RsService(RsRepository rsRepository, UserRepository userRepository, VoteRepository voteRepository) {
+        this.rsRepository = rsRepository;
+        this.userRepository = userRepository;
+        this.voteRepository = voteRepository;
     }
 
     @Transactional

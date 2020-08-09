@@ -25,7 +25,7 @@ import java.util.List;
 public class UserDto {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
     @Column(name = "name")
     private String userName;

@@ -17,7 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class RsDto {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String eventName;
     private String keyword;

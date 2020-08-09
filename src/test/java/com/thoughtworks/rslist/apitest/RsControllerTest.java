@@ -69,8 +69,10 @@ public class RsControllerTest {
     }
     @AfterEach
     void backup(){
-        rsService.initRsList();
         rsRepository.deleteAll();
+        rsRepository.initAutoIncrement();
+        userRepository.deleteAll();
+        userRepository.initAutoIncrement();
     }
 
     @Test

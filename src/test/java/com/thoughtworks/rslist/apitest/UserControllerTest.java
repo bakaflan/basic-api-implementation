@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.apitest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.pojo.User;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.UserService;
@@ -39,6 +40,15 @@ public class UserControllerTest {
     @BeforeEach
     void setUp(){
         userRepository.deleteAll();
+        userRepository.initAutoIncrement();
+        userRepository.save(UserDto.builder().userName("ruiling")
+                .Id(1)
+                .gender("male")
+                .age(22)
+                .email("ruiling1@thoughtworks.com")
+                .phone("180000000000")
+                .build());
+
     }
 
     @AfterEach
@@ -53,7 +63,7 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.user_name",is("xiaowang")))
+                .andExpect(jsonPath("$.userName",is("xiaowang")))
                 .andExpect(status().isCreated());
     }
 
@@ -63,7 +73,7 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.user_name",is("xiaowang")))
+                .andExpect(jsonPath("$.userName",is("xiaowang")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user").param("userName","xiaowang"))
@@ -83,11 +93,11 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.user_name",is("xiaowang")))
+                .andExpect(jsonPath("$.userName",is("xiaowang")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user/list"))
-                .andExpect(jsonPath("$",hasSize(1)))
+                .andExpect(jsonPath("$",hasSize(2)))
                 .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
                 .andExpect(status().isOk());
     }
@@ -152,12 +162,12 @@ public class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
-                .andExpect(jsonPath("$.user_name",is("xiaowang")))
+                .andExpect(jsonPath("$.userName",is("xiaowang")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/user/list"))
-                .andExpect(jsonPath("$",hasSize(1)))
-                .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
+                .andExpect(jsonPath("$",hasSize(2)))
+                 .andExpect(jsonPath("$[0].user_name",is("xiaowang")))
                 .andExpect(status().isOk());
 
         mockMvc.perform(delete("/user")

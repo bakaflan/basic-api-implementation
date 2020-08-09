@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class VoteDto {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne

@@ -2,9 +2,13 @@ package com.thoughtworks.rslist.repository;
 
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.dto.VoteDto;
+import org.hibernate.annotations.NamedNativeQuery;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,4 +31,9 @@ public interface VoteRepository extends CrudRepository<VoteDto,Integer> {
 
     @Override
     void deleteAll();
+
+    @Transactional
+    @Modifying
+    @Query(value = "alter table vote auto_increment = 1",nativeQuery = true)
+    void initAutoIncrement();
 }
